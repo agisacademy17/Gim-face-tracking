@@ -12,9 +12,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
     <!-- Three.js untuk Efek 3D Background Canvas -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <!-- MediaPipe Vision Tasks CDN (Version 0.10.0) -->
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm/vision_bundle.js" crossorigin="anonymous"></script>
     
+    <!-- MediaPipe Tasks Vision (ES Module import assigned to global window) -->
+    <script type="module">
+        import { FilesetResolver, FaceLandmarker, HandLandmarker } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0";
+        window.tasksVision = { FilesetResolver, FaceLandmarker, HandLandmarker };
+    </script>
+
     <style>
         * {
             user-select: none;
@@ -209,7 +213,7 @@
         <section id="calibration-screen" class="hidden flex-col items-center justify-center text-center max-w-2xl space-y-6 glass-panel p-8">
             <h2 class="font-orbitron font-bold text-2xl text-cyan-400">KALIBRASI & IZIN KAMERA</h2>
             <p class="text-gray-300 text-sm">
-                Aplikasi ini membutuhkan akses webcam untuk fitur **Face Tracking** dan **Hand Tracking** secara lokal. Data biometrik Anda aman dan tidak pernah dikirim keluar browser.
+                Aplikasi ini membutuhkan akses webcam untuk fitur <b>Face Tracking</b> dan <b>Hand Tracking</b> secara lokal. Data biometrik Anda aman dan tidak pernah dikirim keluar browser.
             </p>
 
             <div class="w-full bg-slate-900/80 p-4 rounded-xl border border-cyan-500/30 text-left space-y-3">
@@ -224,12 +228,12 @@
             </div>
 
             <!-- Visual Guide Calibration -->
-            <div class="p-4 bg-slate-950/60 rounded-xl border border-slate-700 w-full text-xs text-gray-300 space-y-2">
+            <div class="p-4 bg-slate-950/60 rounded-xl border border-slate-700 w-full text-xs text-gray-300 space-y-2 text-left">
                 <p class="font-bold text-cyan-400 text-sm">Petunjuk Posisi:</p>
                 <ul class="list-disc list-inside space-y-1">
                     <li>Pastikan ruangan terang dan wajah terlihat jelas di webcam.</li>
                     <li>Posisikan tangan sejajar dada untuk mengontrol kursor virtual.</li>
-                    <li>Jika sensor terhambat, Anda dapat berpindah ke kontrol **Mouse/Keyboard** kapan saja.</li>
+                    <li>Jika sensor terhambat, Anda dapat berpindah ke kontrol <b>Mouse/Keyboard</b> kapan saja.</li>
                 </ul>
             </div>
 
@@ -240,55 +244,55 @@
 
         <!-- 3. TUTORIAL CONTROL SCREEN -->
         <section id="tutorial-screen" class="hidden flex-col items-center justify-center max-w-4xl space-y-6 glass-panel p-8 w-full max-h-[90vh] overflow-y-auto">
-            <h2 class="font-orbitron font-bold text-3xl text-purple-400 text-center">PANDUAN INTERAKSI GESTURE</h2>
+            <h2 class="font-orbitron font-bold text-3xl text-purple-400 text-center">PANDUAN KONTROL KARAKTER (FACE TRACKING)</h2>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full text-sm">
                 <!-- Face Gestures -->
                 <div class="bg-slate-900/80 p-5 rounded-xl border border-cyan-500/30 space-y-4">
                     <h3 class="font-orbitron font-bold text-lg text-cyan-400 border-b border-cyan-500/30 pb-2">
-                        <i class="fa-solid fa-face-smile mr-2"></i> Kontrol Wajah (Face Tracking)
+                        <i class="fa-solid fa-face-smile mr-2"></i> Gerakan Kepala (Karakter)
                     </h3>
                     <div class="space-y-3 text-gray-300">
                         <div class="flex items-center space-x-3">
-                            <span class="p-2 bg-slate-800 rounded-lg text-cyan-400 font-bold w-24 text-center">Toleh Kiri</span>
-                            <span>Karakter / Arah Gerak Ke Kiri</span>
+                            <span class="p-2 bg-slate-800 rounded-lg text-cyan-400 font-bold w-32 text-center">Miring/Toleh Kiri</span>
+                            <span>Karakter bergerak ke Kiri</span>
                         </div>
                         <div class="flex items-center space-x-3">
-                            <span class="p-2 bg-slate-800 rounded-lg text-cyan-400 font-bold w-24 text-center">Toleh Kanan</span>
-                            <span>Karakter / Arah Gerak Ke Kanan</span>
+                            <span class="p-2 bg-slate-800 rounded-lg text-cyan-400 font-bold w-32 text-center">Miring/Toleh Kanan</span>
+                            <span>Karakter bergerak ke Kanan</span>
                         </div>
                         <div class="flex items-center space-x-3">
-                            <span class="p-2 bg-slate-800 rounded-lg text-cyan-400 font-bold w-24 text-center">Dongak / Tunduk</span>
-                            <span>Mengarahkan Objek Ke Atas / Bawah</span>
+                            <span class="p-2 bg-slate-800 rounded-lg text-cyan-400 font-bold w-32 text-center">Angkat Kepala</span>
+                            <span>Karakter Melompat ke Platform Atas</span>
                         </div>
                         <div class="flex items-center space-x-3">
-                            <span class="p-2 bg-slate-800 rounded-lg text-cyan-400 font-bold w-24 text-center">Kedip Mata</span>
-                            <span>Konfirmasi Pilihan / Serang Boss</span>
+                            <span class="p-2 bg-slate-800 rounded-lg text-cyan-400 font-bold w-32 text-center">Tundukkan Kepala</span>
+                            <span>Karakter Merunduk / Turun Cepat</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Hand Gestures -->
+                <!-- Action & Fallback Controls -->
                 <div class="bg-slate-900/80 p-5 rounded-xl border border-purple-500/30 space-y-4">
                     <h3 class="font-orbitron font-bold text-lg text-purple-400 border-b border-purple-500/30 pb-2">
-                        <i class="fa-solid fa-hand mr-2"></i> Kontrol Tangan (Hand Tracking)
+                        <i class="fa-solid fa-eye mr-2"></i> Interaksi Soal & Keyboard
                     </h3>
                     <div class="space-y-3 text-gray-300">
                         <div class="flex items-center space-x-3">
-                            <span class="p-2 bg-slate-800 rounded-lg text-purple-400 font-bold w-24 text-center">Telunjuk</span>
-                            <span>Mengarahkan Kursor Virtual</span>
+                            <span class="p-2 bg-slate-800 rounded-lg text-purple-400 font-bold w-32 text-center">Hampiri Jawaban</span>
+                            <span>Gerakkan karakter menyentuh Orb Jawaban</span>
                         </div>
                         <div class="flex items-center space-x-3">
-                            <span class="p-2 bg-slate-800 rounded-lg text-purple-400 font-bold w-24 text-center">Pinch</span>
-                            <span>Ibu Jari + Telunjuk (Ambil / Drag Objek)</span>
+                            <span class="p-2 bg-slate-800 rounded-lg text-purple-400 font-bold w-32 text-center">Kedip / Senyum</span>
+                            <span>Mempercepat Kunci Jawaban saat di dekatnya</span>
                         </div>
                         <div class="flex items-center space-x-3">
-                            <span class="p-2 bg-slate-800 rounded-lg text-purple-400 font-bold w-24 text-center">1 / 2 / 3 / 4 Jari</span>
-                            <span>Memilih Opsi Jawaban (A, B, C, D)</span>
+                            <span class="p-2 bg-slate-800 rounded-lg text-purple-400 font-bold w-32 text-center">A / D atau ◀ / ▶</span>
+                            <span>Alternatif gerak Kiri / Kanan</span>
                         </div>
                         <div class="flex items-center space-x-3">
-                            <span class="p-2 bg-slate-800 rounded-lg text-purple-400 font-bold w-24 text-center">Kepalan Jari</span>
-                            <span>Mengaktifkan Kemampuan Khusus</span>
+                            <span class="p-2 bg-slate-800 rounded-lg text-purple-400 font-bold w-32 text-center">W / ▲ & S / ▼</span>
+                            <span>Alternatif Lompat & Merunduk</span>
                         </div>
                     </div>
                 </div>
@@ -373,60 +377,68 @@
         </section>
 
         <!-- 5. GAMEPLAY & SIMULATION SCREEN -->
-        <section id="gameplay-screen" class="hidden flex-col items-center justify-center max-w-4xl w-full space-y-4 glass-panel p-6">
+        <section id="gameplay-screen" class="hidden flex-col items-center justify-center max-w-4xl w-full space-y-3 glass-panel p-5">
             
             <!-- Brief Math Concept Overlay / Header -->
-            <div class="w-full bg-slate-900/90 p-4 rounded-xl border border-cyan-500/40 flex justify-between items-center">
+            <div class="w-full bg-slate-900/90 p-3 rounded-xl border border-cyan-500/40 flex justify-between items-center">
                 <div>
-                    <h3 id="game-concept-title" class="font-orbitron font-bold text-cyan-400 text-base">MATERI: APA ITU RASIO?</h3>
+                    <h3 id="game-concept-title" class="font-orbitron font-bold text-cyan-400 text-sm md:text-base">MATERI: APA ITU RASIO?</h3>
                     <p id="game-concept-desc" class="text-xs text-gray-300">Rasio membandingkan dua besaran sejenis. Dituliskan sebagai a : b atau a/b.</p>
                 </div>
-                <button onclick="toggleMaterialModal()" class="px-3 py-1.5 bg-cyan-500/20 border border-cyan-400 text-cyan-300 rounded-lg text-xs font-bold hover:bg-cyan-500/40">
-                    <i class="fa-solid fa-book-open"></i> Pelajari Detail
+                <button onclick="toggleMaterialModal()" class="px-3 py-1.5 bg-cyan-500/20 border border-cyan-400 text-cyan-300 rounded-lg text-xs font-bold hover:bg-cyan-500/40 shrink-0 ml-2">
+                    <i class="fa-solid fa-book-open"></i> Materi
                 </button>
             </div>
 
-            <!-- Interactive Game Canvas / Workspace -->
-            <div id="interactive-workspace" class="relative w-full h-[360px] bg-slate-950/80 rounded-xl border-2 border-slate-700 overflow-hidden flex flex-col items-center justify-center p-4">
-                
-                <!-- Dynamic Content Loaded by JS Based on Current Level -->
-                <div id="game-dynamic-content" class="w-full h-full flex flex-col items-center justify-between">
-                    <!-- Default Level 1 Mock Visual Interactive Area -->
-                </div>
-
-                <!-- Touch / Gesture Interaction Help Overlay -->
-                <div id="gesture-hint-bar" class="absolute bottom-2 left-2 right-2 bg-black/60 backdrop-blur border border-slate-700 text-slate-300 text-[11px] px-3 py-1.5 rounded-lg flex justify-between items-center">
-                    <span><i class="fa-solid fa-hand-pointer text-cyan-400 mr-1"></i> Gunakan **Jari 1-4** atau **Klik Opsi** untuk menjawab.</span>
-                    <span class="text-cyan-400 font-mono">Sensitivitas: Sensor Aktif</span>
-                </div>
-            </div>
-
-            <!-- Multiple Choice & Answer Controls -->
-            <div id="question-panel" class="w-full space-y-3">
-                <div class="bg-slate-900/80 p-3 rounded-xl border border-purple-500/30">
-                    <p id="question-text" class="font-bold text-gray-100 text-sm md:text-base text-center">
+            <!-- Question Banner -->
+            <div class="w-full bg-gradient-to-r from-slate-900 via-purple-950/80 to-slate-900 p-3 rounded-xl border border-purple-500/50 shadow-lg">
+                <div class="flex items-center justify-center space-x-2">
+                    <span class="px-2 py-0.5 bg-purple-500/30 border border-purple-400 text-purple-200 rounded text-xs font-orbitron font-bold shrink-0">MISI SOAL</span>
+                    <p id="question-text" class="font-bold text-white text-sm md:text-base text-center">
                         Memuat pertanyaan tantangan matematika...
                     </p>
                 </div>
+            </div>
 
-                <!-- 4 Options Grid -->
-                <div class="grid grid-cols-2 gap-3 w-full">
-                    <button onclick="submitAnswer(0)" class="option-btn bg-slate-900/90 hover:bg-cyan-950 border border-cyan-500/50 p-3 rounded-xl flex items-center space-x-3 text-left transition glow-cyan">
-                        <span class="w-8 h-8 rounded-lg bg-cyan-500/20 text-cyan-400 font-orbitron font-bold flex items-center justify-center border border-cyan-400">A (1 Jari)</span>
-                        <span id="opt-0" class="text-sm font-semibold text-gray-200">Jawaban A</span>
+            <!-- Interactive Game Canvas / Character Arena -->
+            <div id="interactive-workspace" class="relative w-full h-[380px] bg-slate-950/90 rounded-xl border-2 border-cyan-500/40 overflow-hidden shadow-inner">
+                <canvas id="game-canvas" class="w-full h-full block"></canvas>
+
+                <!-- Head Pose & Action Live Status Overlay -->
+                <div class="absolute top-3 left-3 flex flex-wrap gap-2 pointer-events-none">
+                    <div class="bg-slate-900/85 border border-cyan-500/50 px-3 py-1 rounded-lg text-xs flex items-center space-x-2">
+                        <i class="fa-solid fa-head-side-virus text-cyan-400"></i>
+                        <span class="text-gray-300">Arah Kepala:</span>
+                        <span id="live-head-pose" class="font-orbitron font-bold text-cyan-300">NETRAL</span>
+                    </div>
+                    <div class="bg-slate-900/85 border border-purple-500/50 px-3 py-1 rounded-lg text-xs flex items-center space-x-2">
+                        <i class="fa-solid fa-eye text-purple-400"></i>
+                        <span id="live-face-exp" class="font-orbitron font-bold text-purple-300">MATA TERBUKA</span>
+                    </div>
+                </div>
+
+                <!-- On-Screen Touch / Fallback Control Pad (Bottom Right) -->
+                <div class="absolute bottom-10 right-3 flex items-center space-x-1.5 opacity-80 hover:opacity-100 transition z-20">
+                    <button onmousedown="setTouchControl('left', true)" onmouseup="setTouchControl('left', false)" ontouchstart="setTouchControl('left', true)" ontouchend="setTouchControl('left', false)" class="w-9 h-9 rounded-lg bg-slate-800/90 border border-cyan-400 text-cyan-300 flex items-center justify-center active:scale-90" title="Gerak Kiri">
+                        <i class="fa-solid fa-arrow-left"></i>
                     </button>
-                    <button onclick="submitAnswer(1)" class="option-btn bg-slate-900/90 hover:bg-cyan-950 border border-cyan-500/50 p-3 rounded-xl flex items-center space-x-3 text-left transition glow-cyan">
-                        <span class="w-8 h-8 rounded-lg bg-cyan-500/20 text-cyan-400 font-orbitron font-bold flex items-center justify-center border border-cyan-400">B (2 Jari)</span>
-                        <span id="opt-1" class="text-sm font-semibold text-gray-200">Jawaban B</span>
+                    <div class="flex flex-col space-y-1.5">
+                        <button onmousedown="setTouchControl('jump', true)" onmouseup="setTouchControl('jump', false)" ontouchstart="setTouchControl('jump', true)" ontouchend="setTouchControl('jump', false)" class="w-9 h-9 rounded-lg bg-slate-800/90 border border-amber-400 text-amber-300 flex items-center justify-center active:scale-90" title="Lompat">
+                            <i class="fa-solid fa-arrow-up"></i>
+                        </button>
+                        <button onmousedown="setTouchControl('duck', true)" onmouseup="setTouchControl('duck', false)" ontouchstart="setTouchControl('duck', true)" ontouchend="setTouchControl('duck', false)" class="w-9 h-9 rounded-lg bg-slate-800/90 border border-purple-400 text-purple-300 flex items-center justify-center active:scale-90" title="Merunduk">
+                            <i class="fa-solid fa-arrow-down"></i>
+                        </button>
+                    </div>
+                    <button onmousedown="setTouchControl('right', true)" onmouseup="setTouchControl('right', false)" ontouchstart="setTouchControl('right', true)" ontouchend="setTouchControl('right', false)" class="w-9 h-9 rounded-lg bg-slate-800/90 border border-cyan-400 text-cyan-300 flex items-center justify-center active:scale-90" title="Gerak Kanan">
+                        <i class="fa-solid fa-arrow-right"></i>
                     </button>
-                    <button onclick="submitAnswer(2)" class="option-btn bg-slate-900/90 hover:bg-cyan-950 border border-cyan-500/50 p-3 rounded-xl flex items-center space-x-3 text-left transition glow-cyan">
-                        <span class="w-8 h-8 rounded-lg bg-cyan-500/20 text-cyan-400 font-orbitron font-bold flex items-center justify-center border border-cyan-400">C (3 Jari)</span>
-                        <span id="opt-2" class="text-sm font-semibold text-gray-200">Jawaban C</span>
-                    </button>
-                    <button onclick="submitAnswer(3)" class="option-btn bg-slate-900/90 hover:bg-cyan-950 border border-cyan-500/50 p-3 rounded-xl flex items-center space-x-3 text-left transition glow-cyan">
-                        <span class="w-8 h-8 rounded-lg bg-cyan-500/20 text-cyan-400 font-orbitron font-bold flex items-center justify-center border border-cyan-400">D (4 Jari)</span>
-                        <span id="opt-3" class="text-sm font-semibold text-gray-200">Jawaban D</span>
-                    </button>
+                </div>
+
+                <!-- Touch / Gesture Interaction Help Overlay -->
+                <div id="gesture-hint-bar" class="absolute bottom-2 left-2 right-2 bg-black/75 backdrop-blur border border-slate-700 text-slate-300 text-[11px] px-3 py-1 rounded-lg flex justify-between items-center pointer-events-none">
+                    <span id="hint-text"><i class="fa-solid fa-user-astronaut text-cyan-400 mr-1"></i> <b>Miring Kiri/Kanan:</b> Jalan | <b>Angkat Kepala:</b> Lompat | <b>Tunduk:</b> Merunduk | <b>Hampiri Portal Jawaban!</b></span>
+                    <span class="text-amber-400 font-mono hidden sm:inline">Kedip / Senyum = Cepat Pilih</span>
                 </div>
             </div>
         </section>
@@ -477,7 +489,7 @@
 
     </main>
 
-    <!-- MATH MATERIAL POPAL MODAL -->
+    <!-- MATH MATERIAL POPUP MODAL -->
     <div id="material-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
         <div class="glass-panel max-w-2xl w-full p-6 space-y-4 max-h-[85vh] overflow-y-auto border border-cyan-400">
             <div class="flex justify-between items-center border-b border-slate-700 pb-3">
@@ -553,7 +565,6 @@
             renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
 
-            // Particles geometry
             const particleCount = 200;
             const geometry = new THREE.BufferGeometry();
             const positions = new Float32Array(particleCount * 3);
@@ -564,9 +575,9 @@
                 positions[i + 1] = (Math.random() - 0.5) * 80;
                 positions[i + 2] = (Math.random() - 0.5) * 80;
 
-                colors[i] = 0.02; // R
-                colors[i + 1] = 0.7; // G (Cyan-ish)
-                colors[i + 2] = 0.9; // B
+                colors[i] = 0.02;
+                colors[i + 1] = 0.7;
+                colors[i + 2] = 0.9;
             }
 
             geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
@@ -692,7 +703,7 @@
             4: {
                 title: "LEVEL 4: LABORATORIUM PROPORSI",
                 sub: "Skala, Komposisi, & Campuran",
-                conceptTitle: "MATERI 4: PROPORSI COMPOSITION & SKALA",
+                conceptTitle: "MATERI 4: PROPORSI KOMPOSISI & SKALA",
                 conceptDesc: "Mengatur rasio 3 atau lebih bahan dalam campuran atau menghitung ukuran aktual berdasarkan peta/skala.",
                 materialFull: `
                     <p><b>1. Komposisi Campuran:</b> Rasio A : B : C. Contoh cat hijau = biru : kuning (2 : 3).</p>
@@ -781,8 +792,68 @@
         }
 
         /* ==========================================================================
-           5. GAMEPLAY & LEVEL RUNNER
+           5. GAMEPLAY & LEVEL RUNNER (2D CHARACTER PLATFORMER ARENA)
            ========================================================================== */
+        const arena = {
+            canvas: null,
+            ctx: null,
+            width: 800,
+            height: 380,
+            groundY: 325,
+            player: {
+                x: 400,
+                y: 270,
+                vx: 0,
+                vy: 0,
+                width: 40,
+                height: 54,
+                normalHeight: 54,
+                duckHeight: 30,
+                isJumping: false,
+                isDucking: false,
+                facing: 'right',
+                dwellTarget: null,
+                dwellProgress: 0
+            },
+            headControls: {
+                left: false,
+                right: false,
+                jump: false,
+                duck: false,
+                blinkBoost: false
+            },
+            keyControls: {
+                left: false,
+                right: false,
+                jump: false,
+                duck: false
+            },
+            platforms: [],
+            answerNodes: [],
+            particles: [],
+            feedbackMsg: null,
+            feedbackTimer: 0
+        };
+
+        // Keyboard fallback listeners
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') arena.keyControls.left = true;
+            if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') arena.keyControls.right = true;
+            if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W' || e.key === ' ') arena.keyControls.jump = true;
+            if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') arena.keyControls.duck = true;
+        });
+
+        window.addEventListener('keyup', (e) => {
+            if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') arena.keyControls.left = false;
+            if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') arena.keyControls.right = false;
+            if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W' || e.key === ' ') arena.keyControls.jump = false;
+            if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') arena.keyControls.duck = false;
+        });
+
+        function setTouchControl(dir, state) {
+            arena.keyControls[dir] = state;
+        }
+
         function startLevel(lvl) {
             gameState.currentLevel = lvl;
             gameState.currentQuestionIdx = 0;
@@ -797,9 +868,9 @@
             document.getElementById('modal-mat-title').innerText = lvlData.conceptTitle;
             document.getElementById('modal-mat-body').innerHTML = lvlData.materialFull;
 
-            renderQuestion();
-            renderDynamicVisualWorkspace();
             switchScreen('gameplay-screen');
+            initArenaCanvas();
+            renderQuestion();
         }
 
         function updateHUD() {
@@ -808,7 +879,6 @@
             document.getElementById('xp-text').innerText = `${gameState.xp} XP`;
             document.getElementById('xp-bar').style.width = `${Math.min(100, (gameState.xp / 500) * 100)}%`;
 
-            // Render Hearts
             const hearts = document.getElementById('lives-container');
             hearts.innerHTML = '';
             for (let i = 0; i < 3; i++) {
@@ -820,109 +890,468 @@
             }
         }
 
+        function initArenaCanvas() {
+            arena.canvas = document.getElementById('game-canvas');
+            if (!arena.canvas) return;
+            arena.ctx = arena.canvas.getContext('2d');
+            resizeArenaCanvas();
+            window.addEventListener('resize', resizeArenaCanvas);
+
+            if (!arena.loopStarted) {
+                arena.loopStarted = true;
+                requestAnimationFrame(updateArenaGameLoop);
+            }
+        }
+
+        function resizeArenaCanvas() {
+            if (!arena.canvas) return;
+            const rect = arena.canvas.parentElement.getBoundingClientRect();
+            arena.width = rect.width || 800;
+            arena.height = rect.height || 380;
+            arena.canvas.width = arena.width;
+            arena.canvas.height = arena.height;
+            arena.groundY = arena.height - 48;
+            setupLevelPlatformsAndOrbs();
+        }
+
+        function setupLevelPlatformsAndOrbs() {
+            const w = arena.width;
+            const gY = arena.groundY;
+
+            // Buat platform pijakan untuk dilompati karakter
+            arena.platforms = [
+                { x: w * 0.06, y: gY - 115, w: w * 0.26, h: 14 },
+                { x: w * 0.68, y: gY - 115, w: w * 0.26, h: 14 },
+                { x: w * 0.36, y: gY - 65,  w: w * 0.28, h: 12, isLowRoof: true }
+            ];
+
+            const lvl = levelData[gameState.currentLevel];
+            if (!lvl) return;
+            const q = lvl.questions[gameState.currentQuestionIdx];
+            if (!q) return;
+
+            // Tempatkan 4 Portal Jawaban di titik berbeda di dalam arena:
+            // 0: Platform Kiri Atas (Lompat ke Kiri)
+            // 1: Platform Kanan Atas (Lompat ke Kanan)
+            // 2: Lantai Kiri Bawah (Jalan ke Kiri)
+            // 3: Lantai Kanan Bawah (Jalan ke Kanan / Merunduk lewat tengah)
+            const positions = [
+                { x: w * 0.19, y: gY - 165, color: '#06b6d4', badge: 'ATAS KIRI' },
+                { x: w * 0.81, y: gY - 165, color: '#a855f7', badge: 'ATAS KANAN' },
+                { x: w * 0.19, y: gY - 40,  color: '#f97316', badge: 'BAWAH KIRI' },
+                { x: w * 0.81, y: gY - 40,  color: '#10b981', badge: 'BAWAH KANAN' }
+            ];
+
+            arena.answerNodes = q.opts.map((optText, idx) => {
+                const pos = positions[idx % positions.length];
+                return {
+                    idx: idx,
+                    text: optText,
+                    x: pos.x,
+                    y: pos.y,
+                    radius: 34,
+                    color: pos.color,
+                    badge: pos.badge
+                };
+            });
+        }
+
+        function resetPlayerPosition() {
+            arena.player.x = arena.width / 2 - arena.player.width / 2;
+            arena.player.y = arena.groundY - arena.player.normalHeight;
+            arena.player.vx = 0;
+            arena.player.vy = 0;
+            arena.player.dwellTarget = null;
+            arena.player.dwellProgress = 0;
+        }
+
         function renderQuestion() {
             const lvl = levelData[gameState.currentLevel];
             const q = lvl.questions[gameState.currentQuestionIdx];
             document.getElementById('question-text').innerText = q.q;
-            q.opts.forEach((opt, idx) => {
-                document.getElementById(`opt-${idx}`).innerText = opt;
-            });
+            setupLevelPlatformsAndOrbs();
+            resetPlayerPosition();
         }
 
-        function renderDynamicVisualWorkspace() {
-            const workspace = document.getElementById('game-dynamic-content');
-            const lvl = gameState.currentLevel;
-
-            if (lvl === 1) {
-                workspace.innerHTML = `
-                    <div class="text-center my-auto space-y-4">
-                        <div class="flex justify-center items-center space-x-8">
-                            <div class="bg-cyan-950/60 p-4 rounded-xl border border-cyan-400 flex flex-col items-center">
-                                <span class="text-cyan-400 font-bold mb-2">Kelompok Apel Merah</span>
-                                <div class="flex space-x-2 text-2xl text-red-500">
-                                    <i class="fa-solid fa-apple-whole"></i>
-                                    <i class="fa-solid fa-apple-whole"></i>
-                                    <i class="fa-solid fa-apple-whole"></i>
-                                    <i class="fa-solid fa-apple-whole"></i>
-                                    <i class="fa-solid fa-apple-whole"></i>
-                                    <i class="fa-solid fa-apple-whole"></i>
-                                </div>
-                                <span class="text-xs text-gray-400 mt-2">Jumlah: 6</span>
-                            </div>
-                            <span class="font-orbitron text-2xl text-amber-400 font-bold">:</span>
-                            <div class="bg-purple-950/60 p-4 rounded-xl border border-purple-400 flex flex-col items-center">
-                                <span class="text-purple-400 font-bold mb-2">Kelompok Apel Hijau</span>
-                                <div class="flex space-x-1 text-2xl text-emerald-400 flex-wrap max-w-[150px] justify-center">
-                                    <i class="fa-solid fa-apple-whole"></i><i class="fa-solid fa-apple-whole"></i><i class="fa-solid fa-apple-whole"></i><i class="fa-solid fa-apple-whole"></i><i class="fa-solid fa-apple-whole"></i>
-                                    <i class="fa-solid fa-apple-whole"></i><i class="fa-solid fa-apple-whole"></i><i class="fa-solid fa-apple-whole"></i><i class="fa-solid fa-apple-whole"></i><i class="fa-solid fa-apple-whole"></i>
-                                </div>
-                                <span class="text-xs text-gray-400 mt-2">Jumlah: 10</span>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            } else if (lvl === 2) {
-                workspace.innerHTML = `
-                    <div class="text-center my-auto space-y-4">
-                        <i class="fa-solid fa-faucet-drip text-5xl text-cyan-400 animate-bounce"></i>
-                        <p class="font-orbitron text-lg text-cyan-300">Simulasi Aliran Air Senilai</p>
-                        <div class="w-64 h-4 bg-slate-800 rounded-full border border-cyan-400 overflow-hidden mx-auto">
-                            <div class="h-full bg-cyan-400 w-3/4 animate-pulse"></div>
-                        </div>
-                    </div>
-                `;
-            } else if (lvl === 5) {
-                workspace.innerHTML = `
-                    <div class="text-center my-auto space-y-3">
-                        <div class="w-24 h-24 rounded-full bg-red-600/30 border-2 border-red-500 flex items-center justify-center mx-auto glow-orange">
-                            <i class="fa-solid fa-dragon text-5xl text-red-500 animate-pulse"></i>
-                        </div>
-                        <h4 class="font-orbitron font-bold text-red-400 text-lg">BOSS RATIO OVERLORD</h4>
-                        <div class="w-72 h-4 bg-slate-800 rounded-full border border-red-500 overflow-hidden mx-auto">
-                            <div id="boss-hp" class="h-full bg-red-500 transition-all duration-300 w-full"></div>
-                        </div>
-                    </div>
-                `;
-            } else {
-                workspace.innerHTML = `
-                    <div class="text-center my-auto">
-                        <i class="fa-solid fa-flask text-5xl text-purple-400 mb-2"></i>
-                        <p class="font-orbitron text-purple-300">Laboratorium Simulasi Proporsi</p>
-                    </div>
-                `;
+        function spawnEffectParticles(x, y, color) {
+            for (let i = 0; i < 20; i++) {
+                arena.particles.push({
+                    x: x,
+                    y: y,
+                    vx: (Math.random() - 0.5) * 8,
+                    vy: (Math.random() - 0.5) * 8,
+                    life: 1.0,
+                    color: color
+                });
             }
+        }
+
+        function updateArenaGameLoop() {
+            const gameplayScreen = document.getElementById('gameplay-screen');
+            if (gameplayScreen && !gameplayScreen.classList.contains('hidden') && arena.ctx) {
+                updateCharacterPhysics();
+                drawArenaScene();
+            }
+            requestAnimationFrame(updateArenaGameLoop);
+        }
+
+        function updateCharacterPhysics() {
+            const p = arena.player;
+            const moveLeft = arena.headControls.left || arena.keyControls.left;
+            const moveRight = arena.headControls.right || arena.keyControls.right;
+            const wantJump = arena.headControls.jump || arena.keyControls.jump;
+            const wantDuck = arena.headControls.duck || arena.keyControls.duck;
+
+            // Kecepatan horizontal
+            const speed = 4.6;
+            if (moveLeft && !moveRight) {
+                p.vx = -speed;
+                p.facing = 'left';
+            } else if (moveRight && !moveLeft) {
+                p.vx = speed;
+                p.facing = 'right';
+            } else {
+                p.vx *= 0.78;
+                if (Math.abs(p.vx) < 0.2) p.vx = 0;
+            }
+
+            // Merunduk (Tundukkan kepala)
+            if (wantDuck) {
+                if (!p.isDucking) {
+                    p.isDucking = true;
+                    p.y += (p.normalHeight - p.duckHeight);
+                    p.height = p.duckHeight;
+                }
+                // Jika sedang di udara dan menunduk, turun lebih cepat
+                if (p.isJumping) {
+                    p.vy += 1.2;
+                }
+            } else {
+                if (p.isDucking) {
+                    p.isDucking = false;
+                    p.y -= (p.normalHeight - p.duckHeight);
+                    p.height = p.normalHeight;
+                }
+            }
+
+            // Melompat (Angkat kepala)
+            if (wantJump && !p.isJumping && !p.isDucking) {
+                p.vy = -12.8;
+                p.isJumping = true;
+                sfx.playClick();
+            }
+
+            // Gravitasi
+            p.vy += 0.52;
+            const prevBottom = p.y + p.height;
+
+            p.x += p.vx;
+            p.y += p.vy;
+
+            // Batas dinding kiri & kanan
+            if (p.x < 16) p.x = 16;
+            if (p.x + p.width > arena.width - 16) p.x = arena.width - 16 - p.width;
+
+            // Deteksi pijakan pada platform atas
+            if (p.vy >= 0 && !wantDuck) {
+                for (const plat of arena.platforms) {
+                    if (plat.isLowRoof) continue; // Palang tengah untuk latihan merunduk/melompat
+                    const pCenterX = p.x + p.width / 2;
+                    if (pCenterX > plat.x && pCenterX < plat.x + plat.w) {
+                        if (prevBottom <= plat.y + 8 && (p.y + p.height) >= plat.y) {
+                            p.y = plat.y - p.height;
+                            p.vy = 0;
+                            p.isJumping = false;
+                        }
+                    }
+                }
+            }
+
+            // Batas lantai utama
+            if (p.y + p.height >= arena.groundY) {
+                p.y = arena.groundY - p.height;
+                p.vy = 0;
+                p.isJumping = false;
+            }
+
+            // Cek apakah karakter menghampiri salah satu Portal Jawaban
+            const pCenterX = p.x + p.width / 2;
+            const pCenterY = p.y + p.height / 2;
+            let touchedNode = null;
+
+            for (const node of arena.answerNodes) {
+                const dist = Math.hypot(pCenterX - node.x, pCenterY - node.y);
+                if (dist < node.radius + 26) {
+                    touchedNode = node;
+                    break;
+                }
+            }
+
+            if (touchedNode && !gameState.gestureCooldown) {
+                if (p.dwellTarget === touchedNode.idx) {
+                    // Kedip mata atau senyum mempercepat konfirmasi jawaban
+                    const speedMultiplier = arena.headControls.blinkBoost ? 3.2 : 1.4;
+                    p.dwellProgress += speedMultiplier;
+                    if (p.dwellProgress >= 100) {
+                        p.dwellProgress = 0;
+                        spawnEffectParticles(touchedNode.x, touchedNode.y, touchedNode.color);
+                        submitAnswer(touchedNode.idx);
+                    }
+                } else {
+                    p.dwellTarget = touchedNode.idx;
+                    p.dwellProgress = 12;
+                    sfx.playClick();
+                }
+            } else {
+                p.dwellTarget = null;
+                p.dwellProgress = Math.max(0, p.dwellProgress - 4);
+            }
+
+            // Update partikel efek
+            for (let i = arena.particles.length - 1; i >= 0; i--) {
+                const pt = arena.particles[i];
+                pt.x += pt.vx;
+                pt.y += pt.vy;
+                pt.life -= 0.04;
+                if (pt.life <= 0) arena.particles.splice(i, 1);
+            }
+
+            if (arena.feedbackTimer > 0) arena.feedbackTimer--;
+        }
+
+        function drawArenaScene() {
+            const ctx = arena.ctx;
+            const w = arena.width;
+            const h = arena.height;
+            ctx.clearRect(0, 0, w, h);
+
+            // 1. Gambar Grid Cyber Latar Belakang
+            ctx.strokeStyle = 'rgba(6, 182, 212, 0.08)';
+            ctx.lineWidth = 1;
+            const gridSize = 40;
+            for (let x = 0; x < w; x += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, h);
+                ctx.stroke();
+            }
+            for (let y = 0; y < h; y += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(w, y);
+                ctx.stroke();
+            }
+
+            // 2. Gambar Indikator Tema Level di Tengah Arena
+            ctx.save();
+            ctx.font = 'bold 12px Orbitron, sans-serif';
+            ctx.fillStyle = 'rgba(148, 163, 184, 0.35)';
+            ctx.textAlign = 'center';
+            const lvlNames = ["", "ZONA PASAR RASIO", "ZONA DISTRIBUSI AIR", "ZONA JEMBATAN CEPAT", "LABORATORIUM PROPORSI", "SARANG BOSS RATIO"];
+            ctx.fillText(lvlNames[gameState.currentLevel] || "ARENA RASIO", w / 2, 72);
+            ctx.restore();
+
+            // 3. Gambar Platform & Rintangan Rendah
+            for (const plat of arena.platforms) {
+                ctx.save();
+                if (plat.isLowRoof) {
+                    // Palang di tengah dengan petunjuk tunduk / lompat
+                    ctx.fillStyle = 'rgba(249, 115, 22, 0.25)';
+                    ctx.strokeStyle = '#f97316';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.roundRect(plat.x, plat.y, plat.w, plat.h, 6);
+                    ctx.fill();
+                    ctx.stroke();
+
+                    ctx.font = 'bold 10px Rajdhani, sans-serif';
+                    ctx.fillStyle = '#fdba74';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('▲ LOMPAT ATAU TUNDUK LEWAT BAWAH ▼', plat.x + plat.w / 2, plat.y + 10);
+                } else {
+                    ctx.fillStyle = 'rgba(15, 23, 42, 0.9)';
+                    ctx.strokeStyle = '#06b6d4';
+                    ctx.lineWidth = 2;
+                    ctx.shadowColor = '#06b6d4';
+                    ctx.shadowBlur = 8;
+                    ctx.beginPath();
+                    ctx.roundRect(plat.x, plat.y, plat.w, plat.h, 6);
+                    ctx.fill();
+                    ctx.stroke();
+                }
+                ctx.restore();
+            }
+
+            // 4. Gambar Lantai Utama
+            ctx.save();
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(0, arena.groundY, w, h - arena.groundY);
+            ctx.strokeStyle = '#06b6d4';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(0, arena.groundY);
+            ctx.lineTo(w, arena.groundY);
+            ctx.stroke();
+            ctx.restore();
+
+            // 5. Gambar Portal / Orb Jawaban yang Bisa Dihampiri Karakter
+            const time = performance.now() * 0.004;
+            for (const node of arena.answerNodes) {
+                const floatOffset = Math.sin(time + node.idx) * 4;
+                const ny = node.y + floatOffset;
+
+                ctx.save();
+                // Lingkaran luar bercahaya
+                ctx.beginPath();
+                ctx.arc(node.x, ny, node.radius, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(15, 23, 42, 0.88)';
+                ctx.fill();
+                ctx.lineWidth = 3;
+                ctx.strokeStyle = node.color;
+                ctx.shadowColor = node.color;
+                ctx.shadowBlur = 14;
+                ctx.stroke();
+
+                // Progress ring saat karakter berada di dekat portal jawaban
+                if (arena.player.dwellTarget === node.idx && arena.player.dwellProgress > 0) {
+                    ctx.beginPath();
+                    const endAngle = -Math.PI / 2 + (Math.PI * 2 * (arena.player.dwellProgress / 100));
+                    ctx.arc(node.x, ny, node.radius + 7, -Math.PI / 2, endAngle);
+                    ctx.strokeStyle = '#fbbf24';
+                    ctx.lineWidth = 5;
+                    ctx.stroke();
+                }
+
+                // Label posisi kecil di atas portal
+                ctx.shadowBlur = 0;
+                ctx.font = 'bold 9px Orbitron, sans-serif';
+                ctx.fillStyle = node.color;
+                ctx.textAlign = 'center';
+                ctx.fillText(node.badge, node.x, ny - node.radius - 8);
+
+                // Teks Jawaban Matematika di dalam portal
+                ctx.font = 'bold 14px Orbitron, sans-serif';
+                ctx.fillStyle = '#ffffff';
+                ctx.fillText(node.text, node.x, ny + 5);
+                ctx.restore();
+            }
+
+            // 6. Gambar Karakter (Cadet Ratio)
+            drawCharacter(ctx);
+
+            // 7. Gambar Partikel Efek
+            for (const pt of arena.particles) {
+                ctx.save();
+                ctx.globalAlpha = Math.max(0, pt.life);
+                ctx.fillStyle = pt.color;
+                ctx.beginPath();
+                ctx.arc(pt.x, pt.y, 4, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+
+            // 8. Gambar Pesan Feedback (Benar / Coba Lagi)
+            if (arena.feedbackTimer > 0 && arena.feedbackMsg) {
+                ctx.save();
+                ctx.font = '900 22px Orbitron, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillStyle = arena.feedbackColor || '#10b981';
+                ctx.shadowColor = '#000';
+                ctx.shadowBlur = 10;
+                ctx.fillText(arena.feedbackMsg, w / 2, h / 2 - 20);
+                ctx.restore();
+            }
+        }
+
+        function drawCharacter(ctx) {
+            const p = arena.player;
+            ctx.save();
+
+            // Aura karakter
+            ctx.shadowColor = p.isDucking ? '#a855f7' : '#06b6d4';
+            ctx.shadowBlur = 12;
+
+            // Badan Astronot Cadet Ratio
+            ctx.fillStyle = p.isDucking ? '#7e22ce' : '#0284c7';
+            ctx.strokeStyle = '#38bdf8';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.roundRect(p.x, p.y + 12, p.width, p.height - 12, 10);
+            ctx.fill();
+            ctx.stroke();
+
+            // Kepala / Helm Astronot
+            const headRadius = 15;
+            const headX = p.x + p.width / 2;
+            const headY = p.y + (p.isDucking ? 12 : 10);
+            ctx.fillStyle = '#f8fafc';
+            ctx.beginPath();
+            ctx.arc(headX, headY, headRadius, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            // Kaca Visor Helm (Menghadap Kiri / Kanan sesuai arah gerak)
+            const visorOffset = p.facing === 'right' ? 4 : -4;
+            ctx.fillStyle = '#06b6d4';
+            ctx.beginPath();
+            ctx.roundRect(headX - 8 + visorOffset, headY - 5, 16, 10, 4);
+            ctx.fill();
+
+            // Efek Jetpack saat melompat
+            if (p.isJumping) {
+                ctx.fillStyle = '#f97316';
+                ctx.beginPath();
+                ctx.moveTo(p.x + 8, p.y + p.height);
+                ctx.lineTo(p.x + p.width / 2, p.y + p.height + 14 + Math.random() * 6);
+                ctx.lineTo(p.x + p.width - 8, p.y + p.height);
+                ctx.fill();
+            }
+
+            // Label status kecil di atas kepala karakter
+            ctx.shadowBlur = 0;
+            ctx.font = 'bold 10px Orbitron, sans-serif';
+            ctx.fillStyle = '#67e8f9';
+            ctx.textAlign = 'center';
+            let stateText = "CADET";
+            if (p.isJumping) stateText = "LOMPAT!";
+            else if (p.isDucking) stateText = "MERUNDUK";
+            ctx.fillText(stateText, headX, p.y - 10);
+
+            ctx.restore();
         }
 
         function submitAnswer(idx) {
             if (gameState.gestureCooldown) return;
             gameState.gestureCooldown = true;
-            setTimeout(() => gameState.gestureCooldown = false, 1000);
+            setTimeout(() => gameState.gestureCooldown = false, 1100);
 
             const q = levelData[gameState.currentLevel].questions[gameState.currentQuestionIdx];
             if (idx === q.ans) {
-                // Correct
                 sfx.playCorrect();
                 gameState.score += 200 + (gameState.combo * 50);
                 gameState.xp += 50;
                 gameState.combo++;
 
-                // If boss level, reduce boss HP
-                if (gameState.currentLevel === 5) {
-                    const bossHp = document.getElementById('boss-hp');
-                    if (bossHp) bossHp.style.width = '30%';
-                }
+                arena.feedbackMsg = "BENAR! +200 SKOR";
+                arena.feedbackColor = "#34d399";
+                arena.feedbackTimer = 45;
 
-                nextQuestionOrFinish();
+                setTimeout(() => {
+                    nextQuestionOrFinish();
+                }, 600);
             } else {
-                // Wrong
                 sfx.playWrong();
                 gameState.combo = 0;
                 gameState.lives--;
                 updateHUD();
 
+                arena.feedbackMsg = "KURANG TEPAT! AYO COBA LAGI";
+                arena.feedbackColor = "#f87171";
+                arena.feedbackTimer = 50;
+                resetPlayerPosition();
+
                 if (gameState.lives <= 0) {
-                    alert("Nyawa habis! Mencoba ulang level ini.");
-                    startLevel(gameState.currentLevel);
+                    setTimeout(() => startLevel(gameState.currentLevel), 700);
                     return;
                 }
             }
@@ -935,7 +1364,6 @@
                 gameState.currentQuestionIdx++;
                 renderQuestion();
             } else {
-                // Finish Level
                 finishLevel();
             }
         }
@@ -964,6 +1392,7 @@
         let video = null;
         let canvasElement = null;
         let canvasCtx = null;
+        let webcamStream = null;
 
         async function requestCameraAndStart() {
             switchScreen('calibration-screen');
@@ -971,29 +1400,61 @@
             canvasElement = document.getElementById('output_canvas');
             canvasCtx = canvasElement.getContext('2d');
 
+            document.getElementById('cam-status-icon').className = "fa-solid fa-circle-notch fa-spin text-amber-400 text-lg";
+            document.getElementById('cam-status-text').innerText = "Meminta izin & menghubungkan kamera...";
+
             try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
-                video.srcObject = stream;
+                webcamStream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: "user" }, 
+                    audio: false 
+                });
+                video.srcObject = webcamStream;
+
+                await new Promise((resolve) => {
+                    video.onloadedmetadata = () => {
+                        video.play();
+                        resolve();
+                    };
+                });
+
                 document.getElementById('cam-status-icon').className = "fa-solid fa-circle-check text-emerald-400 text-lg";
                 document.getElementById('cam-status-text').innerText = "Kamera Terhubung Real-Time!";
-                
+
                 await initMediaPipeVision();
             } catch (err) {
-                console.warn("Webcam blocked or missing. Switching to fallback mode.", err);
+                console.warn("Kamera tidak dapat diakses atau diblokir. Berpindah ke mode Mouse/Keyboard.", err);
                 document.getElementById('cam-status-icon').className = "fa-solid fa-triangle-exclamation text-amber-400 text-lg";
-                document.getElementById('cam-status-text').innerText = "Kamera tidak terdeteksi. Menggunakan kontrol Mouse/Keyboard.";
+                document.getElementById('cam-status-text').innerText = "Kamera tidak terbaca/diizinkan. Menggunakan kontrol Mouse/Keyboard.";
                 enableCalibrationBtn();
                 gameState.fallbackMouseMode = true;
             }
         }
 
         async function initMediaPipeVision() {
-            const vision = await FilesetResolver.forVisionTasks(
-                "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm"
-            );
+            document.getElementById('mediapipe-status-icon').className = "fa-solid fa-circle-notch fa-spin text-amber-400 text-lg";
+            document.getElementById('mediapipe-status-text').innerText = "Memuat Model Vision AI (MediaPipe)...";
 
             try {
-                faceLandmarker = await FaceLandmarker.createFromOptions(vision, {
+                let retries = 0;
+                while (!window.tasksVision && retries < 30) {
+                    await new Promise(r => setTimeout(r, 100));
+                    retries++;
+                }
+
+                const vision = window.tasksVision || window.vision;
+                if (!vision || !vision.FilesetResolver) {
+                    throw new Error("Library MediaPipe Tasks Vision tidak ditemukan di window object.");
+                }
+
+                const FilesetResolver = vision.FilesetResolver;
+                const FaceLandmarker = vision.FaceLandmarker;
+                const HandLandmarker = vision.HandLandmarker;
+
+                const filesetResolver = await FilesetResolver.forVisionTasks(
+                    "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm"
+                );
+
+                faceLandmarker = await FaceLandmarker.createFromOptions(filesetResolver, {
                     baseOptions: {
                         modelAssetPath: `https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task`,
                         delegate: "GPU"
@@ -1003,22 +1464,24 @@
                     numFaces: 1
                 });
 
-                handLandmarker = await HandLandmarker.createFromOptions(vision, {
+                handLandmarker = await HandLandmarker.createFromOptions(filesetResolver, {
                     baseOptions: {
                         modelAssetPath: `https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task`,
                         delegate: "GPU"
                     },
                     runningMode: "VIDEO",
-                    numHands: 1
+                    numHands: 2
                 });
 
                 document.getElementById('mediapipe-status-icon').className = "fa-solid fa-circle-check text-emerald-400 text-lg";
-                document.getElementById('mediapipe-status-text').innerText = "Vision AI Local Ready!";
+                document.getElementById('mediapipe-status-text').innerText = "Model Face & Hand AI Siap!";
                 enableCalibrationBtn();
 
-                video.addEventListener('loadeddata', predictWebcam);
-            } catch (e) {
-                console.error("Error loading MediaPipe tasks:", e);
+                predictWebcam();
+            } catch (err) {
+                console.error("Gagal menginisialisasi MediaPipe Vision:", err);
+                document.getElementById('mediapipe-status-icon').className = "fa-solid fa-triangle-exclamation text-amber-400 text-lg";
+                document.getElementById('mediapipe-status-text').innerText = "Sensor MediaPipe gagal dimuat. Menggunakan kontrol Mouse/Keyboard.";
                 enableCalibrationBtn();
                 gameState.fallbackMouseMode = true;
             }
@@ -1026,90 +1489,149 @@
 
         function enableCalibrationBtn() {
             const btn = document.getElementById('btn-start-calibration');
-            btn.disabled = false;
-            btn.classList.remove('opacity-50', 'cursor-not-allowed');
-            btn.classList.add('glow-cyan', 'hover:scale-105');
+            if (btn) {
+                btn.disabled = false;
+                btn.classList.remove('opacity-50', 'cursor-not-allowed');
+                btn.classList.add('glow-cyan', 'hover:scale-105');
+            }
         }
 
         let lastVideoTime = -1;
+
         async function predictWebcam() {
+            if (!video || video.paused || video.ended) {
+                requestAnimationFrame(predictWebcam);
+                return;
+            }
+
+            if (canvasElement.width !== video.videoWidth || canvasElement.height !== video.videoHeight) {
+                canvasElement.width = video.videoWidth || 640;
+                canvasElement.height = video.videoHeight || 480;
+            }
+
+            const startTimeMs = performance.now();
+
             if (video.currentTime !== lastVideoTime) {
                 lastVideoTime = video.currentTime;
-                let startTimeMs = performance.now();
+                canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
 
-                if (faceLandmarker && !gameState.fallbackMouseMode) {
-                    const faceResults = faceLandmarker.detectForVideo(video, startTimeMs);
-                    processFaceData(faceResults);
+                const gameplayScreen = document.getElementById('gameplay-screen');
+                const isGameplayActive = gameplayScreen && !gameplayScreen.classList.contains('hidden');
+
+                // Deteksi Wajah (Posisi Kepala, Kemiringan, Angkat/Tunduk Kepala, Kedipan & Ekspresi)
+                if (faceLandmarker) {
+                    try {
+                        const faceResults = faceLandmarker.detectForVideo(video, startTimeMs);
+                        if (faceResults.faceLandmarks && faceResults.faceLandmarks.length > 0) {
+                            const landmarks = faceResults.faceLandmarks[0];
+                            const nose = landmarks[1];
+                            const leftEye = landmarks[33];
+                            const rightEye = landmarks[263];
+
+                            // Gambar titik hidung & garis kemiringan mata pada layar monitor sensor
+                            const nx = (1 - nose.x) * canvasElement.width;
+                            const ny = nose.y * canvasElement.height;
+                            const lex = (1 - leftEye.x) * canvasElement.width;
+                            const ley = leftEye.y * canvasElement.height;
+                            const rex = (1 - rightEye.x) * canvasElement.width;
+                            const rey = rightEye.y * canvasElement.height;
+
+                            canvasCtx.strokeStyle = "#a855f7";
+                            canvasCtx.lineWidth = 2;
+                            canvasCtx.beginPath();
+                            canvasCtx.moveTo(lex, ley);
+                            canvasCtx.lineTo(rex, rey);
+                            canvasCtx.stroke();
+
+                            canvasCtx.fillStyle = "#06b6d4";
+                            canvasCtx.beginPath();
+                            canvasCtx.arc(nx, ny, 6, 0, 2 * Math.PI);
+                            canvasCtx.fill();
+
+                            // 1. Deteksi Miring / Toleh Kepala Kiri & Kanan
+                            // Head roll (selisih tinggi mata kiri & kanan) + Head yaw (posisi horizontal hidung)
+                            const eyeRoll = leftEye.y - rightEye.y; 
+                            const isHeadLeft = (nose.x > 0.55) || (eyeRoll > 0.032);
+                            const isHeadRight = (nose.x < 0.45) || (eyeRoll < -0.032);
+
+                            // 2. Deteksi Angkat Kepala (Lompat) & Tundukkan Kepala (Merunduk)
+                            const eyeMidY = (leftEye.y + rightEye.y) / 2;
+                            const noseRelY = nose.y - eyeMidY; // Semakin kecil = mendongak, semakin besar = menunduk
+                            const isHeadUp = (nose.y < 0.41) || (noseRelY < 0.065);
+                            const isHeadDown = (nose.y > 0.60) || (noseRelY > 0.135);
+
+                            // 3. Deteksi Kedipan Mata & Ekspresi Senyum dari Face Blendshapes
+                            let isBlinkingOrSmiling = false;
+                            let expLabel = "MATA TERBUKA";
+                            if (faceResults.faceBlendshapes && faceResults.faceBlendshapes.length > 0) {
+                                const shapes = faceResults.faceBlendshapes[0].categories;
+                                const blinkL = shapes.find(s => s.categoryName === 'eyeBlinkLeft')?.score || 0;
+                                const blinkR = shapes.find(s => s.categoryName === 'eyeBlinkRight')?.score || 0;
+                                const smileL = shapes.find(s => s.categoryName === 'mouthSmileLeft')?.score || 0;
+                                const smileR = shapes.find(s => s.categoryName === 'mouthSmileRight')?.score || 0;
+
+                                if (blinkL > 0.45 || blinkR > 0.45) {
+                                    isBlinkingOrSmiling = true;
+                                    expLabel = "KEDIP MATA (AKTIF)";
+                                } else if (smileL > 0.5 || smileR > 0.5) {
+                                    isBlinkingOrSmiling = true;
+                                    expLabel = "SENYUM (AKTIF)";
+                                }
+                            }
+
+                            // Terapkan ke kontrol karakter di arena
+                            arena.headControls.left = isHeadLeft;
+                            arena.headControls.right = isHeadRight;
+                            arena.headControls.jump = isHeadUp;
+                            arena.headControls.duck = isHeadDown;
+                            arena.headControls.blinkBoost = isBlinkingOrSmiling;
+
+                            // Update indikator UI
+                            const badge = document.getElementById('face-dir-badge');
+                            const livePose = document.getElementById('live-head-pose');
+                            const liveExp = document.getElementById('live-face-exp');
+
+                            let poseNames = [];
+                            if (isHeadLeft) poseNames.push("KIRI");
+                            if (isHeadRight) poseNames.push("KANAN");
+                            if (isHeadUp) poseNames.push("LOMPAT (ATAS)");
+                            if (isHeadDown) poseNames.push("TUNDUK (BAWAH)");
+
+                            const poseStr = poseNames.length > 0 ? poseNames.join(" + ") : "NETRAL";
+                            if (badge) badge.innerText = `Kepala: ${poseStr}`;
+                            if (livePose) livePose.innerText = poseStr;
+                            if (liveExp) liveExp.innerText = expLabel;
+                        }
+                    } catch (e) {
+                        console.error(e);
+                    }
                 }
 
+                // Deteksi Tangan & Kontrol Kursor Virtual
                 if (handLandmarker && !gameState.fallbackMouseMode) {
-                    const handResults = handLandmarker.detectForVideo(video, startTimeMs);
-                    processHandData(handResults);
+                    try {
+                        const handResults = handLandmarker.detectForVideo(video, startTimeMs);
+                        if (handResults.landmarks && handResults.landmarks.length > 0) {
+                            const handLandmarks = handResults.landmarks[0];
+                            const indexTip = handLandmarks[8];
+
+                            const cursorX = (1 - indexTip.x) * window.innerWidth;
+                            const cursorY = indexTip.y * window.innerHeight;
+
+                            const vCursor = document.getElementById('virtual-cursor');
+                            if (vCursor) {
+                                vCursor.classList.remove('hidden');
+                                vCursor.style.left = `${cursorX}px`;
+                                vCursor.style.top = `${cursorY}px`;
+                            }
+                        }
+                    } catch (e) {
+                        console.error(e);
+                    }
                 }
             }
+
             requestAnimationFrame(predictWebcam);
-        }
-
-        /* Face Gesture Processing */
-        function processFaceData(results) {
-            if (results.faceLandmarks && results.faceLandmarks.length > 0) {
-                const landmarks = results.faceLandmarks[0];
-                const nose = landmarks[1]; // Nose tip
-                const badge = document.getElementById('face-dir-badge');
-
-                // Head turn thresholding (X position relative to center ~0.5)
-                if (nose.x < 0.4) {
-                    badge.innerText = "Face: Toleh Kiri";
-                } else if (nose.x > 0.6) {
-                    badge.innerText = "Face: Toleh Kanan";
-                } else if (nose.y < 0.35) {
-                    badge.innerText = "Face: Dongak";
-                } else if (nose.y > 0.65) {
-                    badge.innerText = "Face: Tunduk";
-                } else {
-                    badge.innerText = "Face: Netral";
-                }
-            }
-        }
-
-        /* Hand Gesture & Virtual Cursor Processing */
-        function processHandData(results) {
-            const cursor = document.getElementById('virtual-cursor');
-            if (results.landmarks && results.landmarks.length > 0) {
-                cursor.classList.remove('hidden');
-                const hand = results.landmarks[0];
-                const indexTip = hand[8];
-                const thumbTip = hand[4];
-
-                // Screen coordinates mapping (Mirrored X)
-                const x = (1 - indexTip.x) * window.innerWidth;
-                const y = indexTip.y * window.innerHeight;
-
-                cursor.style.left = `${x}px`;
-                cursor.style.top = `${y}px`;
-
-                // Pinch detection (Distance index tip to thumb tip)
-                const dist = Math.hypot(indexTip.x - thumbTip.x, indexTip.y - thumbTip.y);
-                if (dist < 0.05) {
-                    cursor.classList.add('cursor-pinch');
-                } else {
-                    cursor.classList.remove('cursor-pinch');
-                }
-
-                // Finger Count Detection (Index, Middle, Ring, Pinky extended)
-                let extendedFingers = 0;
-                if (hand[8].y < hand[6].y) extendedFingers++;  // Index
-                if (hand[12].y < hand[10].y) extendedFingers++; // Middle
-                if (hand[16].y < hand[14].y) extendedFingers++; // Ring
-                if (hand[20].y < hand[18].y) extendedFingers++; // Pinky
-
-                // Trigger answer option based on gesture fingers (1-4)
-                if (extendedFingers >= 1 && extendedFingers <= 4 && !document.getElementById('gameplay-screen').classList.contains('hidden')) {
-                    submitAnswer(extendedFingers - 1);
-                }
-            } else {
-                cursor.classList.add('hidden');
-            }
         }
 
         /* ==========================================================================
